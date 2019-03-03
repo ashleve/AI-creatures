@@ -19,7 +19,7 @@ public class CreatureManager : MonoBehaviour {
     public static int TIME_LIMIT = 1500;
     public int generation = 0;
 
-    public bool spawnInOnePlace = true;
+    public bool spawnInOnePlace = false;
 
 
     // Use this for initialization
@@ -84,7 +84,7 @@ public class CreatureManager : MonoBehaviour {
 
     void InitialiseCreatures()
     {
-        int x = 0, z = 0, add = 20;
+        int x = 0, z = 0, add = 15;
         if (spawnInOnePlace) add = 0;
 
         for (int i = 0; i < NUMBER_OF_CREATURES; i++)
