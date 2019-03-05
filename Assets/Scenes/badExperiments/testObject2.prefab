@@ -347,16 +347,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 592df3fcf448cc4459ed942772b47f07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  children: []
-  spawnPos: []
-  spawnRotations: []
-  mat: {fileID: 0}
+  mainBody: {fileID: 0}
   inputs: []
   fitnessScore: 0
-  distToTarget: 0
   time: 0
-  timeStep: 0.05
-  showRay: 1
+  time2: 0
+  time3: 0
   awake: 1
   reachedTheGoal: 0
   OutputLayer: []

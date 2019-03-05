@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class CreatureManager : MonoBehaviour {
 
-    public GameObject Eve;      // The creature used to create new creatures
+    public GameObject Eve = null;      // The creature used to create new creatures
     //public GameObject Target;
     //public CreatureController Champion;
 
     public static int NUMBER_OF_CREATURES = 50;
     private List<CreatureController> creatures;
 
-    public static float MUTATION_RATE = 0.03f;
+    public static float MUTATION_RATE = 0.02f;
     public static int PULL_OF_PARENTS = 6;
     private float fitnessSum;
 
     public int time = 0;
-    public static int TIME_LIMIT = 1500;
+    public static int TIME_LIMIT = 1000;
     public int generation = 0;
 
     public bool spawnInOnePlace = false;
@@ -25,6 +25,12 @@ public class CreatureManager : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        if(!Eve)
+        {
+            Debug.Log("error: no initial creature selected");
+            this.enabled = false;
+        }
+
         creatures = new List<CreatureController>();
         InitialiseCreatures();
     }
@@ -75,15 +81,10 @@ public class CreatureManager : MonoBehaviour {
     }
 
 
-    //void ReleaseConstraints()
-    //{
-    //    for (int i = 0; i < NUMBER_OF_CREATURES; i++)
-    //        creatures[i].ReleaseConstraints();
-    //}
-
-
     void InitialiseCreatures()
     {
+        if (!Eve) return;
+
         int x = 0, z = 0, add = 15;
         if (spawnInOnePlace) add = 0;
 

@@ -16,7 +16,7 @@ public class CreatureController : MonoBehaviour {
         public Quaternion[] spawnRotations;
     }
     public spawn spawnInfo = new spawn();
-
+    public bool awake = true;
 
 
     //public Material mat;
@@ -24,29 +24,23 @@ public class CreatureController : MonoBehaviour {
     public NeuralNet NN;
     public float[] inputs;  // input data fed to network
 
-
     public float fitnessScore;
 
 
-    public static float MAX_ANGULAR_VELOCITY = 4.0f;
-    //float TURN_SPEED = 90.0f;
-    //float MAX_SPEED = 30.0f;
+    public static float MAX_ANGULAR_VELOCITY = 20.0f;
 
 
-    public double time = 0;
+    private int numOfTimers = 0;
+    public double time1 = 0;
     public double time2 = 0;
-    public static double timeStep = 0.03f;
-    public static double timeStep2 = 0.05f;
-
-
-    public bool awake = true;
-    public bool reachedTheGoal = false;
-
+    public double time3 = 0;
+    public static double timeStep1 = 0.01f;
+    public static double timeStep2 = 0.03f;
+    public static double timeStep3 = 0.05f;
 
 
     private List<float> l = new List<float>();
     public float[] OutputLayer;
-
 
 
 
@@ -82,7 +76,7 @@ public class CreatureController : MonoBehaviour {
             }
         }
 
-        for(int i = 0; i < muscles.Count; i++)
+        for (int i = 0; i < muscles.Count; i++)
         {
             muscles[i].setMuscleJoints(joints);
             muscles[i].setMuscleDirections(joints);
@@ -93,32 +87,35 @@ public class CreatureController : MonoBehaviour {
         GetSpawnInfo();
 
 
-        int numberOfInputs = (numOfJoints - 1) + numOfSensors + 2;  // angles between joints + number of sensors + number of timers
+        int numberOfInputs = (numOfJoints - 1) + numOfSensors + numOfTimers;  // angles between joints + number of sensors + number of timers
         inputs = new float[numberOfInputs];
 
-        int numberOfOutputs = 2 * numOfMuscles + 2;
+        int numberOfOutputs = 2 * numOfMuscles;
 
         NN = new NeuralNet(numberOfInputs, numberOfOutputs);
         NN.AddHiddenLayer(6);
         //NN.AddHiddenLayer(4);
     }
 
-
+    int s = 1;
 
     // Unity method for physics updates
     void FixedUpdate()
     {
-        if (awake)
+        if (awake && s % 1 == 0)
         {
             GetInputs();
             ForwardPropagate();
-            FireMuscles();
+            //FireMuscles();
 
             UpdateOutputs();
-            time += timeStep;
+            time1 += timeStep1;
             time2 += timeStep2;
-
+            time3 += timeStep3;
         }
+
+
+        s++;
     }
 
 
@@ -134,15 +131,12 @@ public class CreatureController : MonoBehaviour {
             muscles[i].UseMuscle(output);
             muscles[i].UseMuscle(-output2);
 
-            //UseMuscle(dir1, dir2, output1, i, j);
-            //UseMuscle(dir1, dir2, -output2, i, j);
-            
         }
 
-        float output3 = NN.OutputLayer[NN.OutputLayer.Count - 1].value;
-        sensors[sensors.Count - 1].GetComponent<Rigidbody>().AddRelativeTorque(600f * Vector3.right * output3);
-        float output4 = NN.OutputLayer[NN.OutputLayer.Count - 1].value;
-        sensors[sensors.Count - 1].GetComponent<Rigidbody>().AddRelativeTorque(600f * Vector3.right * -output4);
+        //float output3 = NN.OutputLayer[NN.OutputLayer.Count - 1].value;
+        //sensors[sensors.Count - 1].GetComponent<Rigidbody>().AddRelativeTorque(200f * Vector3.right * output3);
+        //float output4 = NN.OutputLayer[NN.OutputLayer.Count - 1].value;
+        //sensors[sensors.Count - 1].GetComponent<Rigidbody>().AddRelativeTorque(200f * Vector3.right * -output4);
     }
 
 
@@ -194,46 +188,10 @@ public class CreatureController : MonoBehaviour {
                 inputs[i] = 0;  // -1
         }
 
-        inputs[i] = Mathf.Sin((float)time);
-        inputs[i + 1] = Mathf.Sin((float)time2);
+        //inputs[i] = Mathf.Sin((float)time);
+        //inputs[i + 1] = Mathf.Sin((float)time2);
+        //inputs[i + 2] = Mathf.Sin((float)time3);
     }
-
-
-
-    //private float ValueTresholding(float output, float value)
-    //{
-    //    if (output > value) output = value;
-    //    else if (output < -value) output = -value;
-
-    //    return output;
-    //}
-
-
-
-    //private void ApplyForces()
-    //{
-    //    float engineForce = NN.OutputLayer[0].value;
-    //    float turning = NN.OutputLayer[1].value;
-
-    //    if (engineForce > 1) engineForce = 1f;
-    //    else if (engineForce < -1) engineForce = -1f;
-
-    //    if (turning > 1) turning = 1f;
-    //    else if (turning < -1) turning = -1f;
-
-
-    //    velocity += engineForce * ACCELERATION * Time.deltaTime;
-    //    if (velocity > MAX_SPEED) velocity = MAX_SPEED;
-    //    else if (velocity < -MAX_SPEED) velocity = -MAX_SPEED;
-
-    //    rotation = transform.rotation;
-    //    rotation *= Quaternion.AngleAxis(turning * TURN_SPEED * Time.deltaTime, new Vector3(0, 1, 0));
-
-    //    transform.rotation = rotation;
-    //    Vector3 direction = new Vector3(0, 0, 1);
-    //    direction = rotation * direction;
-    //    transform.position += direction * velocity * Time.deltaTime;
-    //}
 
 
     public void UpdateOutputs()
@@ -253,26 +211,13 @@ public class CreatureController : MonoBehaviour {
             transform.GetChild(i).gameObject.transform.rotation = spawnInfo.spawnRotations[i];
         }
 
-        time = 0.0f;
+        time1 = 0.0f;
         time2 = 0.0f;
-        //time3 = 0.0f;
+        time3 = 0.0f;
 
         awake = true;
     }
 
-
-    //public void SetConstraints()
-    //{
-    //    for (int i = 0; i < joints.Count; i++)
-    //        joints[i].GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-    //}
-
-
-    //public void ReleaseConstraints()
-    //{
-    //    for (int i = 0; i < joints.Count; i++)
-    //        joints[i].GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-    //}
 
     public void ForwardPropagate()
     {

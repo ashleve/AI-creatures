@@ -111,7 +111,7 @@ public class NeuralNet
             for (int i = 1; i < HiddenLayers.Count; i++)
             {
                 CalculateLayer(HiddenLayers[i], HiddenLayers[i - 1]);
-                ApplyActivationFunction(HiddenLayers[i], "relu");
+                ApplyActivationFunction(HiddenLayers[i], "tanh");
             }
 
             CalculateLayer(OutputLayer, HiddenLayers[HiddenLayers.Count - 1]);
