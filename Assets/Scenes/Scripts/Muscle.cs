@@ -7,11 +7,9 @@ public class Muscle {
     private GameObject limb1;
     private GameObject limb2;
 
-    private static float FORCE = 1000f;
-    private float surfaceAreaJ1;
-    private float surfaceAreaJ2;
-    private float volume1;
-    private float volume2;
+    private static float STRENGTH = 2500f;
+    private static float limbAreaXZ;
+    private static float maxStrength;   // proportional to surface area of limbs
 
 
 
@@ -23,7 +21,7 @@ public class Muscle {
     }
 
 
-    public void setLimbs(List<GameObject> limbs)  // finds 2 joints with the smallest distance to muscle
+    public void setLimbs(List<GameObject> limbs)  
     {
         if(limbs.Count < 2)
         {
@@ -32,6 +30,10 @@ public class Muscle {
             return;
         }
 
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        // finds 2 limbs with the smallest distance to muscle
         Vector3 musclePosition = muscle.transform.position;
 
         GameObject tmp1 = limbs[0];
@@ -63,16 +65,14 @@ public class Muscle {
 
         limb1 = tmp1;
         limb2 = tmp2;
+        /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-        //surfaceAreaJ1 = joint1.GetComponent<Renderer>().bounds.size[0] * joint1.GetComponent<Renderer>().bounds.size[2];
-        //surfaceAreaJ2  = joint2.GetComponent<Renderer>().bounds.size[0] * joint2.GetComponent<Renderer>().bounds.size[2];
-
-        //Vector3 size1 = joint1.GetComponent<Renderer>().bounds.size;
-        //volume1 = size1.x * size1.y * size1.z;
-        //Vector3 size2 = joint2.GetComponent<Renderer>().bounds.size;
-        //volume2 = size2.x * size2.y * size2.z;
+        float surfaceAreaXZ1 = limb1.GetComponent<Renderer>().bounds.size.x * limb1.GetComponent<Renderer>().bounds.size.z;
+        float surfaceAreaXZ2 = limb2.GetComponent<Renderer>().bounds.size.x * limb2.GetComponent<Renderer>().bounds.size.z;
+        limbAreaXZ = surfaceAreaXZ1 + surfaceAreaXZ2;
+        maxStrength = STRENGTH * limbAreaXZ;
     }
 
 
@@ -80,36 +80,26 @@ public class Muscle {
     {
         if (limb1 == null || limb2 == null)
         {
-            Debug.Log("error: joints not assigned");
+            Debug.Log("error: limbs not assigned");
             Time.timeScale = 0;
             return;
         }
+
+
+
         //dir1 = joint1.transform.position - muscle.transform.position;
         //dir2 = joint2.transform.position - muscle.transform.position;
-
         Vector3 direction1 = limb1.transform.position - limb2.transform.position;
-        Vector3 direction2 = limb2.transform.position - limb1.transform.position;
+        Vector3 direction2 = -direction1;
 
-        //float velocityJ1 = (joint1.GetComponent<Rigidbody>().velocity[0] + joint1.GetComponent<Rigidbody>().velocity[1] + joint1.GetComponent<Rigidbody>().velocity[2])/3;
-        //float velocityJ2 = (joint2.GetComponent<Rigidbody>().velocity[0] + joint2.GetComponent<Rigidbody>().velocity[1] + joint2.GetComponent<Rigidbody>().velocity[2])/3;
-        //if (velocityJ1 == 0) velocityJ1 = 1;
-        //if (velocityJ2 == 0) velocityJ2= 1;
 
-        float a1 = FORCE * value;
-        float a2 = FORCE * value;
-
-        //Debug.Log(a1);
-        //Debug.Log(a2);
-
-        //joint1.GetComponent<Rigidbody>().AddForce(FORCE * dir1 * value); // AddRelativeForce
-        //joint2.GetComponent<Rigidbody>().AddForce(FORCE * dir2 * value);
+        // value = <0,1>
+        float FORCE = maxStrength * value;
 
         //Debug.Log(FORCE);
-        //Debug.Log(velocityJ1);
-        //Debug.Log(value);
-        //Debug.Log(dir1);
-        limb1.GetComponent<Rigidbody>().AddForce(direction1 * a1);
-        limb2.GetComponent<Rigidbody>().AddForce(direction2 * a2);
+
+        limb1.GetComponent<Rigidbody>().AddForce(direction1 * FORCE);
+        limb2.GetComponent<Rigidbody>().AddForce(direction2 * FORCE);
     }
 
 
