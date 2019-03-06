@@ -8,6 +8,8 @@ public class CreatureController : MonoBehaviour {
     private List<GameObject> sensors = new List<GameObject>();
     private List<Muscle> muscles = new List<Muscle>();
 
+    private float massScalar = 200; // mass of limb = massScalar * limbVolume
+
 
     public struct spawn
     {
@@ -59,6 +61,7 @@ public class CreatureController : MonoBehaviour {
             {
                 numOfJoints++;
                 joints.Add(child);
+                SetMass(child);
             }
             else if (child.tag == "sensor")
             {
@@ -119,16 +122,22 @@ public class CreatureController : MonoBehaviour {
     }
 
 
+    private void SetMass(GameObject limb)
+    {
+        Vector3 size = limb.GetComponent<Renderer>().bounds.size;
+        float limbVolume = size.x * size.y * size.z;
+        limb.GetComponent<Rigidbody>().mass = massScalar * limbVolume;
+    }
 
 
     private void FireMuscles()
     {
         for (int i = 0; i < muscles.Count; i++)
         {
-            float output = NN.OutputLayer[i].value;
+            float output1 = NN.OutputLayer[i].value;
             float output2 = NN.OutputLayer[i + 1].value;
 
-            muscles[i].UseMuscle(output);
+            muscles[i].UseMuscle(output1);
             muscles[i].UseMuscle(-output2);
 
         }

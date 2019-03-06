@@ -11,8 +11,8 @@ public class Muscle {
     private static float FORCE = 1000f;
     float surfaceAreaJ1;
     float surfaceAreaJ2;
-    float volumeJ1;
-    float volumeJ2;
+    float volume1;
+    float volume2;
 
 
 
@@ -68,9 +68,12 @@ public class Muscle {
 
 
         //surfaceAreaJ1 = joint1.GetComponent<Renderer>().bounds.size[0] * joint1.GetComponent<Renderer>().bounds.size[2];
-        //surfaceAreaJ2 = joint2.GetComponent<Renderer>().bounds.size[0] * joint2.GetComponent<Renderer>().bounds.size[2];
-        //volumeJ1 = surfaceAreaJ1 * joint1.GetComponent<Renderer>().bounds.size[1];
-        //volumeJ2 = surfaceAreaJ2 * joint2.GetComponent<Renderer>().bounds.size[1];
+        //surfaceAreaJ2  = joint2.GetComponent<Renderer>().bounds.size[0] * joint2.GetComponent<Renderer>().bounds.size[2];
+
+        //Vector3 size1 = joint1.GetComponent<Renderer>().bounds.size;
+        //volume1 = size1.x * size1.y * size1.z;
+        //Vector3 size2 = joint2.GetComponent<Renderer>().bounds.size;
+        //volume2 = size2.x * size2.y * size2.z;
     }
 
     public void setMuscleDirections(List<GameObject> joints)
@@ -96,8 +99,11 @@ public class Muscle {
             Time.timeScale = 0;
             return;
         }
-        dir1 = joint1.transform.position - muscle.transform.position;
-        dir2 = joint2.transform.position - muscle.transform.position;
+        //dir1 = joint1.transform.position - muscle.transform.position;
+        //dir2 = joint2.transform.position - muscle.transform.position;
+
+        dir1 = joint1.transform.position - joint2.transform.position;
+        dir2 = joint2.transform.position - joint1.transform.position;
 
         //float velocityJ1 = (joint1.GetComponent<Rigidbody>().velocity[0] + joint1.GetComponent<Rigidbody>().velocity[1] + joint1.GetComponent<Rigidbody>().velocity[2])/3;
         //float velocityJ2 = (joint2.GetComponent<Rigidbody>().velocity[0] + joint2.GetComponent<Rigidbody>().velocity[1] + joint2.GetComponent<Rigidbody>().velocity[2])/3;
@@ -120,8 +126,8 @@ public class Muscle {
         joint1.GetComponent<Rigidbody>().AddForce(dir1 * a1);
         joint2.GetComponent<Rigidbody>().AddForce(dir2 * a2);
 
-        muscle.GetComponent<Rigidbody>().AddForce(-dir1 * a1);
-        muscle.GetComponent<Rigidbody>().AddForce(-dir2 * a2);
+        //muscle.GetComponent<Rigidbody>().AddForce(-dir1 * a1);
+        //muscle.GetComponent<Rigidbody>().AddForce(-dir2 * a2);
 
         //muscle.GetComponent<Rigidbody>().AddForce(FORCE * -dir1 * value);
         //muscle.GetComponent<Rigidbody>().AddForce(FORCE * -dir2 * value);
