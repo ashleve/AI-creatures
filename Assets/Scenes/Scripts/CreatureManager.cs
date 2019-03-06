@@ -28,7 +28,7 @@ public class CreatureManager : MonoBehaviour {
         if(!Eve)
         {
             Debug.Log("error: no initial creature selected");
-            this.enabled = false;
+            this.enabled = false; //turn off script
         }
 
         creatures = new List<CreatureController>();

@@ -27,14 +27,14 @@ public class CreatureController : MonoBehaviour {
     public float fitnessScore;
 
 
-    public static float MAX_ANGULAR_VELOCITY = 20.0f;
+    public static float MAX_ANGULAR_VELOCITY = 5.0f;
 
 
-    private int numOfTimers = 0;
+    private int numOfTimers = 1;
     public double time1 = 0;
     public double time2 = 0;
     public double time3 = 0;
-    public static double timeStep1 = 0.01f;
+    public static double timeStep1 = 0.02f;
     public static double timeStep2 = 0.03f;
     public static double timeStep3 = 0.05f;
 
@@ -106,7 +106,7 @@ public class CreatureController : MonoBehaviour {
         {
             GetInputs();
             ForwardPropagate();
-            //FireMuscles();
+            FireMuscles();
 
             UpdateOutputs();
             time1 += timeStep1;
@@ -188,7 +188,7 @@ public class CreatureController : MonoBehaviour {
                 inputs[i] = 0;  // -1
         }
 
-        //inputs[i] = Mathf.Sin((float)time);
+        inputs[i] = Mathf.Sin((float)time1);
         //inputs[i + 1] = Mathf.Sin((float)time2);
         //inputs[i + 2] = Mathf.Sin((float)time3);
     }

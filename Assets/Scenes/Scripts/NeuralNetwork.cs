@@ -41,7 +41,6 @@ public class Neuron
         int i = 0;
         foreach(float weight in inputWeights)
         {
-            //Debug.Log(i);
             value += weight * Layer[i].value;
             i++;
         }
@@ -91,7 +90,7 @@ public class NeuralNet
             hiddenLayer[i].SetRandomWeights(previousLayer);
         }
         hiddenLayer.Add(new Neuron(BIAS_VALUE));
-        //Debug.Log("hidden size: " + hiddenLayer.Count);
+
         SetNewRandomWeightsForOutputLayer(OutputLayer, hiddenLayer);
     }
 
@@ -104,14 +103,13 @@ public class NeuralNet
 
         if (HiddenLayers.Count != 0)
         {
-            //Debug.Log("1 hidden");
             CalculateLayer(HiddenLayers[0], InputLayer);
             ApplyActivationFunction(HiddenLayers[0], "relu");
-            //Debug.Log("2 hidden");
+
             for (int i = 1; i < HiddenLayers.Count; i++)
             {
                 CalculateLayer(HiddenLayers[i], HiddenLayers[i - 1]);
-                ApplyActivationFunction(HiddenLayers[i], "tanh");
+                ApplyActivationFunction(HiddenLayers[i], "relu");
             }
 
             CalculateLayer(OutputLayer, HiddenLayers[HiddenLayers.Count - 1]);
@@ -132,10 +130,8 @@ public class NeuralNet
 
     public void CalculateLayer(List<Neuron> Layer, List<Neuron> previousLayer)
     {
-        //Debug.Log("hidden size: " + Layer.Count);
         for (int i = 0; i < Layer.Count; i++)
         {
-        //Debug.Log("lll");
             Layer[i].CalculateValue(previousLayer);
         }
     }
