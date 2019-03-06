@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CreatureController : MonoBehaviour {
     public GameObject mainBody;
-    private List<GameObject> joints = new List<GameObject>();
+    private List<GameObject> limbs = new List<GameObject>();
     private List<GameObject> sensors = new List<GameObject>();
     private List<Muscle> muscles = new List<Muscle>();
 
@@ -32,7 +32,7 @@ public class CreatureController : MonoBehaviour {
     public static float MAX_ANGULAR_VELOCITY = 5.0f;
 
 
-    private int numOfTimers = 1;
+    private int numOfOscillators = 1;
     public double time1 = 0;
     public double time2 = 0;
     public double time3 = 0;
@@ -60,7 +60,7 @@ public class CreatureController : MonoBehaviour {
             if (child.tag == "joint")
             {
                 numOfJoints++;
-                joints.Add(child);
+                limbs.Add(child);
                 SetMass(child);
             }
             else if (child.tag == "sensor")
@@ -81,8 +81,7 @@ public class CreatureController : MonoBehaviour {
 
         for (int i = 0; i < muscles.Count; i++)
         {
-            muscles[i].setMuscleJoints(joints);
-            muscles[i].setMuscleDirections(joints);
+            muscles[i].setLimbs(limbs);
         }
 
         SetMaxAngularVelocity(MAX_ANGULAR_VELOCITY);
@@ -90,7 +89,7 @@ public class CreatureController : MonoBehaviour {
         GetSpawnInfo();
 
 
-        int numberOfInputs = (numOfJoints - 1) + numOfSensors + numOfTimers;  // angles between joints + number of sensors + number of timers
+        int numberOfInputs = (numOfJoints - 1) + numOfSensors + numOfOscillators;  // angles between joints + number of sensors + number of timers
         inputs = new float[numberOfInputs];
 
         int numberOfOutputs = 2 * numOfMuscles;
@@ -100,25 +99,22 @@ public class CreatureController : MonoBehaviour {
         //NN.AddHiddenLayer(4);
     }
 
-    int s = 1;
 
     // Unity method for physics updates
     void FixedUpdate()
     {
-        if (awake && s % 1 == 0)
+        if (awake)
         {
             GetInputs();
             ForwardPropagate();
             FireMuscles();
 
-            UpdateOutputs();
+            UpdateOutputDisplay();
             time1 += timeStep1;
             time2 += timeStep2;
             time3 += timeStep3;
         }
 
-
-        s++;
     }
 
 
@@ -167,10 +163,10 @@ public class CreatureController : MonoBehaviour {
 
     private void SetMaxAngularVelocity(float maxAngVel)
     {
-        for (int i = 0; i < joints.Count; i++)
+        for (int i = 0; i < limbs.Count; i++)
         {
-            joints[i].GetComponent<Rigidbody>().maxAngularVelocity = maxAngVel; //set max angular velocity for all joint objects
-            joints[i].GetComponent<Rigidbody>().maxDepenetrationVelocity = 0.2f;
+            limbs[i].GetComponent<Rigidbody>().maxAngularVelocity = maxAngVel; //set max angular velocity for all joint objects
+            limbs[i].GetComponent<Rigidbody>().maxDepenetrationVelocity = 0.2f; //set this idk why just in case
         }
         for (int i = 0; i < sensors.Count; i++)
         {
@@ -183,9 +179,9 @@ public class CreatureController : MonoBehaviour {
     private void GetInputs()
     {
         int i;
-        for (i = 0; i < joints.Count - 1; i++)
+        for (i = 0; i < limbs.Count - 1; i++)
         {
-            float value = Vector3.Angle(joints[i].transform.forward, joints[i + 1].transform.forward);
+            float value = Vector3.Angle(limbs[i].transform.forward, limbs[i + 1].transform.forward);
             inputs[i] = value / 180;    // normalise angle from 0-180 to 0-1
         }
 
@@ -203,7 +199,7 @@ public class CreatureController : MonoBehaviour {
     }
 
 
-    public void UpdateOutputs()
+    public void UpdateOutputDisplay()
     {
         l.Clear();
         foreach (var Neuron in NN.OutputLayer)

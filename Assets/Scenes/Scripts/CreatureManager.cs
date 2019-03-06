@@ -8,7 +8,7 @@ public class CreatureManager : MonoBehaviour {
     //public GameObject Target;
     //public CreatureController Champion;
 
-    public static int NUMBER_OF_CREATURES = 50;
+    public static int NUMBER_OF_CREATURES = 48;
     private List<CreatureController> creatures;
 
     public static float MUTATION_RATE = 0.02f;
