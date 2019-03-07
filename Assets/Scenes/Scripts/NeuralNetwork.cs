@@ -119,7 +119,7 @@ public class NeuralNet
             CalculateLayer(OutputLayer, InputLayer);
         }
 
-        ApplyActivationFunction(OutputLayer, "sigmoid");
+        ApplyActivationFunction(OutputLayer, "tanh");
     }
 
     public void SetNewRandomWeightsForOutputLayer(List<Neuron> Layer, List<Neuron> previousLayer)

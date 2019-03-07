@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Muscle {
     private GameObject muscle;
-    private GameObject limb1;
-    private GameObject limb2;
+    public GameObject limb1;
+    public GameObject limb2;
 
-    private static float STRENGTH = 2500f;
+    private static float STRENGTH = 100f;
     private static float limbAreaXZ;
     private static float maxStrength;   // proportional to surface area of limbs
 
@@ -87,10 +87,10 @@ public class Muscle {
 
 
 
-        //dir1 = joint1.transform.position - muscle.transform.position;
-        //dir2 = joint2.transform.position - muscle.transform.position;
-        Vector3 direction1 = limb1.transform.position - limb2.transform.position;
-        Vector3 direction2 = -direction1;
+        Vector3 direction1 = limb1.transform.position - muscle.transform.position;
+        Vector3 direction2 = limb2.transform.position - muscle.transform.position;
+        //Vector3 direction1 = limb1.transform.position - limb2.transform.position;
+        //Vector3 direction2 = -direction1;
 
 
         // value = <0,1>
@@ -100,6 +100,9 @@ public class Muscle {
 
         limb1.GetComponent<Rigidbody>().AddForce(direction1 * FORCE);
         limb2.GetComponent<Rigidbody>().AddForce(direction2 * FORCE);
+
+        muscle.GetComponent<Rigidbody>().AddForce(-direction1 * FORCE);
+        muscle.GetComponent<Rigidbody>().AddForce(-direction2 * FORCE);
     }
 
 

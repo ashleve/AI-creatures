@@ -16,7 +16,7 @@ public class CreatureManager : MonoBehaviour {
     private float fitnessSum;
 
     public int time = 0;
-    public static int TIME_LIMIT = 2500;
+    public static int TIME_LIMIT = 2000;
     public int generation = 0;
 
     public bool spawnInOnePlace = false;

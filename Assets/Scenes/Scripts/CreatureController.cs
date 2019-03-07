@@ -32,13 +32,13 @@ public class CreatureController : MonoBehaviour {
     public static float MAX_ANGULAR_VELOCITY = 5.0f;
 
 
-    private int numOfOscillators = 1;
-    public double time1 = 0;
-    public double time2 = 0;
-    public double time3 = 0;
-    public static double timeStep1 = 0.02f;
-    public static double timeStep2 = 0.03f;
-    public static double timeStep3 = 0.05f;
+    private int numOfOscillators = 3;
+    public double time1;
+    public double time2;
+    public double time3;
+    public double timeStep1 = 0.02f;
+    public double timeStep2 = 0.02f;
+    public double timeStep3 = 0.02f;
 
 
     private List<float> l = new List<float>();
@@ -87,12 +87,12 @@ public class CreatureController : MonoBehaviour {
         SetMaxAngularVelocity(MAX_ANGULAR_VELOCITY);
 
         GetSpawnInfo();
+        SetTimers();
 
-
-        int numberOfInputs = (numOfJoints - 1) + numOfSensors + numOfOscillators;  // angles between joints + number of sensors + number of timers
+        int numberOfInputs = (numOfJoints - 1) + numOfSensors + numOfOscillators;  // angles between joints + number of sensors + number of oscillators
         inputs = new float[numberOfInputs];
 
-        int numberOfOutputs = 2 * numOfMuscles;
+        int numberOfOutputs = numOfMuscles;
 
         NN = new NeuralNet(numberOfInputs, numberOfOutputs);
         NN.AddHiddenLayer(6);
@@ -131,18 +131,17 @@ public class CreatureController : MonoBehaviour {
         for (int i = 0; i < muscles.Count; i++)
         {
             float output1 = NN.OutputLayer[i].value;
-            float output2 = NN.OutputLayer[i + 1].value;
+            //float output2 = NN.OutputLayer[i + 1].value;
 
             muscles[i].UseMuscle(output1);
-            muscles[i].UseMuscle(-output2);
+            //muscles[i].UseMuscle(-output2);
 
         }
 
-        //float output3 = NN.OutputLayer[NN.OutputLayer.Count - 1].value;
-        //sensors[sensors.Count - 1].GetComponent<Rigidbody>().AddRelativeTorque(200f * Vector3.right * output3);
-        //float output4 = NN.OutputLayer[NN.OutputLayer.Count - 1].value;
-        //sensors[sensors.Count - 1].GetComponent<Rigidbody>().AddRelativeTorque(200f * Vector3.right * -output4);
+
+
     }
+
 
 
     private void GetSpawnInfo()
@@ -194,8 +193,8 @@ public class CreatureController : MonoBehaviour {
         }
 
         inputs[i] = Mathf.Sin((float)time1);
-        //inputs[i + 1] = Mathf.Sin((float)time2);
-        //inputs[i + 2] = Mathf.Sin((float)time3);
+        inputs[i + 1] = Mathf.Sin((float)time2);
+        inputs[i + 2] = Mathf.Sin((float)time3);
     }
 
 
@@ -216,11 +215,17 @@ public class CreatureController : MonoBehaviour {
             transform.GetChild(i).gameObject.transform.rotation = spawnInfo.spawnRotations[i];
         }
 
-        time1 = 0.0f;
-        time2 = 0.0f;
-        time3 = 0.0f;
+        SetTimers();
 
         awake = true;
+    }
+
+    private void SetTimers()
+    {
+
+        time1 = 0.0f;
+        time2 = 3.1415f / 2;
+        time3 = 3.1415f / 4;
     }
 
 
